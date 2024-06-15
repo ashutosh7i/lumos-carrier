@@ -25,7 +25,7 @@ export default function Component() {
   const [output, setOutput] = useState("");
   const { toast } = useToast();
 
-  const predict = async (e) => {
+  const predict = async (e:any) => {
     e.preventDefault();
     toast({
       title: "Calling API 📡",
@@ -51,9 +51,9 @@ export default function Component() {
       });
     }
   };
-
-  const handlePrint = () => {
-    const printWindow = window.open("", "_blank");
+const handlePrint = () => {
+  const printWindow = window.open("", "_blank");
+  if (printWindow) {
     printWindow.document.write(
       "<html><head><title>Job Description</title></head><body>"
     );
@@ -61,9 +61,12 @@ export default function Component() {
     printWindow.document.write("</body></html>");
     printWindow.document.close();
     printWindow.print();
-  };
+  } else {
+    console.error("Failed to open print window.");
+  }
+};
 
-  return (
+return (
     <Tabs
       value={activeTab}
       onValueChange={setActiveTab}

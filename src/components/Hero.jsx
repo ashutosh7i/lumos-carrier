@@ -77,8 +77,7 @@ export default function Hero() {
           {/* Title */}
           <div className="mt-5 max-w-2xl text-center mx-auto">
             <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-              {/* Let&apos;s Build Together */}
-              Job Hunterrrr🧑‍💼
+              Job Hunterrrr&apos;🧑‍💼
             </h1>
           </div>
           {/* End Title */}
@@ -89,7 +88,7 @@ export default function Hero() {
             <p className="text-md text-muted-foreground">
               A comprehensive suite of tools to streamline your job application
               process. From analyzing your resume to preparing you for
-              interviews, we've got you covered😉.
+              interviews, we got you covered😉.
             </p>
           </div>
           {/* Buttons */}

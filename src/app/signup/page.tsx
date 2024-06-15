@@ -1,7 +1,8 @@
-"use client"
+"use client";
 
 import { FormEvent, useState } from "react";
 import { register } from "../appwrite";
+import Image from "next/image";
 
 export default function SignUp() {
   const [email, setEmail] = useState<string>();
