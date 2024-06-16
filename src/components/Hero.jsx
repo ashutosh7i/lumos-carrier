@@ -99,7 +99,7 @@ export default function Hero() {
           {/* End Title */}
           <div className="mt-5 max-w-3xl text-center mx-auto">
             <p className="text-xl text-muted-foreground">
-              Transfigure Yourself Into a Star Candidate🌟
+              Transfigure Yourself Into An Outstanding Candidate🌟
             </p>
             <br />
             <p className="text-md text-muted-foreground">
@@ -152,7 +152,7 @@ export default function Hero() {
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             {
-              "LumosCareer is your comprehensive toolkit for transforming yourself into a star candidate. Whether you're applying for jobs or internships, we streamline every step of your application process.Our suite of tools offers resume analysis, job description summaries, resume and cover letter generation, and interview preparation, ensuring you shine in every application."
+              "LumosCareer is your comprehensive toolkit for transforming yourself into an outstanding candidate. Whether you're applying for jobs or internships, we streamline every step of your application process.Our suite of tools offers resume analysis, job description summaries, resume and cover letter generation, and interview preparation, ensuring you shine in every application."
             }
           </p>
         </div>
@@ -168,7 +168,7 @@ export default function Hero() {
           watch this video
         </div>
         <div className="flex justify-center">
-          <ReactPlayer url="https://www.youtube.com/watch?v=ysz5S6PUM-U" />
+          <ReactPlayer url="https://www.youtube.com/watch?v=0R-yGD9WGCI" />
         </div>
         {/* Clients */}
       </div>
