@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# LumosCareer [![wakatime](https://wakatime.com/badge/user/62850a07-caf8-470f-86a7-660093b4f5b4/project/f5f70d0d-ff48-4cd7-b2c5-18f56620ab42.svg)](https://wakatime.com/badge/user/62850a07-caf8-470f-86a7-660093b4f5b4/project/f5f70d0d-ff48-4cd7-b2c5-18f56620ab42)
 
-## Getting Started
+## Project Description
 
-First, run the development server:
+*LumosCareer* is an innovative web application designed to assist job seekers in crafting the perfect job application. Our tool leverages advanced natural language processing (NLP) and machine learning technologies to provide comprehensive support through various stages of the job application process. Here's a detailed overview of what LumosCareer offers:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Key Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. **Job Description Summarization**:
+   - Users can input a job description, and our app will generate a concise summary highlighting the key points. This helps job seekers quickly understand the most important aspects of a job listing.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+2. **Resume Analysis**:
+   - LumosCareer analyzes uploaded resumes against a given job description to evaluate how well they match. The analysis includes:
+     - *Matching Score*: A percentage score indicating how well the resume matches the job description.
+     - *Missing Keywords*: Identifies important keywords from the job description that are missing in the resume.
+     - *Profile Summary*: A summary highlighting the strengths and relevance of the resume to the job description.
+     - *ATS Friendliness*: Assesses how well the resume is likely to perform with Applicant Tracking Systems (ATS).
+     - *Suggestions for Improvement*: Recommendations on what to remove, add, and improve in the resume.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+3. **Cover Letter Generation**:
+   - Based on the job description and the resume, the app generates a personalized cover letter tailored to the specific job. This ensures the cover letter aligns with both the applicant’s qualifications and the employer’s needs.
 
-## Learn More
+4. **Interview Guide Generation**:
+   - Provides a customized interview guide based on the job description and resume. This includes potential interview questions and tips on how to prepare for them, helping candidates feel more confident and prepared.
 
-To learn more about Next.js, take a look at the following resources:
+5. **Resume Generation**:
+   - After analyzing the resume, users can generate an updated resume incorporating all the suggested improvements. The new resume is presented in an HTML format, ready to be copied and used.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Technical Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- **Frontend**: React, NextJs, Shadcn, Tailwindcss
+- **BaaS**: Appwrite✨[Auth, Databases, Storage], Vercel
+- **Backend**: Python, Flask, NGINX, Azure VM
+- **Natural Language Processing**: Integrates with Gemeni for content generation and analysis
+- **File Handling**: Utilizes Python libraries for PDF text extraction
 
-## Deploy on Vercel
+## Vision
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+LumosCareer aims to empower job seekers by providing them with the tools and insights they need to present their best selves to potential employers. By leveraging cutting-edge technology, we strive to make the job application process more efficient, effective, and successful.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Whether you’re a seasoned professional or just starting your career journey, LumosCareer is here to light your way to success. 🌟
