@@ -69,7 +69,7 @@ export default function Component() {
   return (
     <div className="w-full max-w-3xl mx-auto">
       <header className="bg-gray-900 text-white py-4 px-6 flex justify-between items-center shadow-lg">
-        <h1 className="text-2xl font-bold">Welcome back!</h1>
+        <h1 className="text-2xl font-bold">Welcome!</h1>
         <div className="flex items-center gap-4">
           <Dialog>
             <DialogTrigger asChild>
@@ -107,18 +107,23 @@ export default function Component() {
       </header>
       <div className="flex-1 overflow-y-auto p-6 bg-gray-100">
         <div className="bg-white rounded-lg shadow-md p-6">
-          <table className="w-full">
-            <thead>
-              <tr className="bg-gray-200 text-gray-600">
-                <th className="px-4 py-2 text-left">Title</th>
-                <th className="px-4 py-2 text-left">Status</th>
-                <th className="px-4 py-2 text-left">Date</th>
-                <th className="px-4 py-2 text-left">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Array.isArray(documents) &&
-                documents.map((doc, index) => (
+          {documents.length === 0 ? (
+            <div className="text-center">
+              <h2 className="text-2xl font-bold mb-4">Welcome new user!</h2>
+              <p>{'Click on "➕ New Application" to start.👆'}</p>
+            </div>
+          ) : (
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gray-200 text-gray-600">
+                  <th className="px-4 py-2 text-left">Title</th>
+                  <th className="px-4 py-2 text-left">Status</th>
+                  <th className="px-4 py-2 text-left">Date</th>
+                  <th className="px-4 py-2 text-left">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {documents.map((doc, index) => (
                   <tr key={index} className="border-b">
                     <td className="px-4 py-2">{doc.$id}</td>
                     <td className="px-4 py-2">
@@ -141,8 +146,9 @@ export default function Component() {
                     </td>
                   </tr>
                 ))}
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </div>

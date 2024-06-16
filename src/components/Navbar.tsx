@@ -7,23 +7,32 @@ import { getUserData, logout } from "@/app/appwrite";
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "./mode-toggle";
+import { Account } from "appwrite";
+import Image from "next/image";
+import logo from "../../public/logo.png";
 
 export default function Component() {
   const router = useRouter();
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState("");
 
   useEffect(() => {
     getUserData()
-      .then((account) => setUser(account))
-      .catch((error) => router.push("/login"));
-  }, [router]);
+      .then((account) => {
+        if (account) {
+          setUser(account.name);
+          console.log(user);
+        }
+      })
+      .catch((error) => console.error(error));
+  }, [router, user]);
 
   const handleLogOut = () => logout().then(() => router.push("/login"));
 
   return (
     <header className="flex h-16 w-full items-center justify-between px-4 md:px-6">
       <Link href="/" className="flex items-center gap-2" prefetch={false}>
-        <MountainIcon className="h-6 w-6" />
+        {/* <MountainIcon className="h-6 w-6" /> */}
+        <Image src={logo} alt="image" height={"100"} />
         <span className="sr-only">Acme Inc</span>
       </Link>
       <nav className="hidden items-center gap-6 md:flex">
@@ -101,7 +110,7 @@ export default function Component() {
 
 // ... rest of the code
 
-function MenuIcon(props) {
+function MenuIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -121,7 +130,7 @@ function MenuIcon(props) {
   );
 }
 
-function MountainIcon(props) {
+function MountainIcon() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

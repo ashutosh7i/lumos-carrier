@@ -657,7 +657,7 @@ export default function Component() {
                   <Download className="ml-2 h-4 w-4" />
                 </Button>
                 <Button type="submit">
-                  <Link href={"/"}>Done✨😄</Link>
+                  <Link href={"/generate-questions"}>Interview Prep 😉❓</Link>
                 </Button>
               </CardFooter>
             </Card>

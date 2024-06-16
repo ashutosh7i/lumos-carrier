@@ -1,0 +1,37 @@
+.button {
+  width: 112px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  border-radius: 7px;
+  font-weight: 570;
+  border: none;
+  position: relative;
+  cursor: pointer;
+  transition-duration: 0.2s;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.116);
+  padding-left: 12px;
+  transition-duration: 0.5s;
+}
+
+.svgIcon {
+  height: 25px;
+  color: red;
+  transition-duration: 1.5s;
+}
+
+.bell path {
+  fill: rgb(253, 22, 22);
+}
+
+.button:active {
+  transform: scale(0.97);
+  transition-duration: 0.2s;
+}
+
+.button:hover .svgIcon {
+  transform: rotate(250deg);
+  transition-duration: 1.5s;
+}

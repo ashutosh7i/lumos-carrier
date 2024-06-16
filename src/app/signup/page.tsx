@@ -47,6 +47,7 @@ export default function LoginForm() {
       return;
     }
 
+    console.log({ name, email, password });
     register(email, password, name)
       .then((account) =>
         toast({
@@ -67,22 +68,16 @@ export default function LoginForm() {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
-            {/* <div className="grid grid-cols-2 gap-4"> */}
             <div className="grid gap-2">
               <Label htmlFor="name">Name</Label>
               <Input
                 id="name"
                 type="text"
                 placeholder="Max"
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => setName(e.target.value.replace(/\s/g, "_"))}
                 required
               />
             </div>
-            {/* <div className="grid gap-2">
-                <Label htmlFor="last-name">Last name</Label>
-                <Input id="last-name" placeholder="Robinson" required />
-              </div> */}
-            {/* </div> */}
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -104,9 +99,6 @@ export default function LoginForm() {
             <Button type="submit" className="w-full">
               Create an account
             </Button>
-            {/* <Button variant="outline" className="w-full">
-              Sign up with GitHub
-            </Button> */}
           </div>
           <div className="mt-4 text-center text-sm">
             Already have an account?{" "}

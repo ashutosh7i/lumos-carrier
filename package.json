@@ -42,8 +42,11 @@
     "react": "^18",
     "react-dom": "^18",
     "react-gauge-chart": "^0.5.1",
+    "react-player": "^2.16.0",
     "react-simple-wysiwyg": "^3.0.2",
     "react-to-print": "^2.15.1",
+    "react-typed": "^2.0.12",
+    "sharp": "^0.33.4",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "tinymce": "^7.1.2"
