@@ -25,7 +25,7 @@ export default function Component() {
   const [loading, setLoading] = useState(false); // Added loading state
   const { toast } = useToast();
 
-  const predict = async (e) => {
+  const predict = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
     if (!userInput.trim()) {
