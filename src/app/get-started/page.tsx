@@ -11,30 +11,41 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { Download, Mail } from "lucide-react";
+import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import Link from "next/link";
 import axios from "axios";
-import { createDocument, updateDocument } from "../appwrite";
+import { updateDocument } from "../appwrite";
 
 export default function Component() {
   const [activeTab, setActiveTab] = useState("input");
   const [userInput, setUserInput] = useState("");
   const [output, setOutput] = useState("");
+  const [loading, setLoading] = useState(false); // Added loading state
   const { toast } = useToast();
 
-  const predict = async (e: any) => {
+  const predict = async (e) => {
     e.preventDefault();
+
+    if (!userInput.trim()) {
+      toast({
+        title: "Error ❌",
+        description: "Please enter some text in the textarea.",
+      });
+      return;
+    }
+
     toast({
       title: "Calling API 📡",
       description: "Please wait while we process the data",
     });
+
+    setLoading(true); // Start loading
+
     try {
       const response = await axios.post(
-        "http://20.188.113.104/summarize",
+        "https://backend.lumoscareer.co/summarize",
         {
           job_description: userInput,
         },
@@ -46,23 +57,18 @@ export default function Component() {
       );
 
       console.log(response.data.summary);
-      // const data = JSON.parse(response.data); // Parse the string back to JSON
-      // console.log(data);
-      // Save the output jd to the database
-      // await createDocument("jobName", response.data.summary);
       await updateDocument(
         undefined,
         undefined,
         undefined,
         undefined,
         response.data.summary
-      ).then(() => {
-        toast({
-          title: "Data Saved ✅",
-          description: "Your data has been saved successfully.",
-        });
+      );
+      toast({
+        title: "Data Saved ✅",
+        description: "Your data has been saved successfully.",
       });
-      setOutput(response.data.summary); // Now you can access userInput
+      setOutput(response.data.summary);
       setActiveTab("output");
     } catch (error) {
       toast({
@@ -70,8 +76,11 @@ export default function Component() {
         description:
           "An error occurred while fetching data. Please try again later.",
       });
+    } finally {
+      setLoading(false); // End loading
     }
   };
+
   const handlePrint = () => {
     const printWindow = window.open("", "_blank");
     if (printWindow) {
@@ -106,12 +115,6 @@ export default function Component() {
                   This tool will help you summarize your job description.
                 </CardDescription>
               </div>
-              <div className="flex items-center">
-                {/* <div className="grid w-full max-w-sm items-center gap-1.5">
-                  <Label htmlFor="picture">Upload PDF</Label>
-                  <Input id="picture" type="file" />
-                </div> */}
-              </div>
             </div>
           </CardHeader>
           <CardContent>
@@ -139,7 +142,7 @@ export default function Component() {
           <CardHeader>
             <CardTitle>JD Summary:</CardTitle>
             <CardDescription>
-              this is the summary of the job description
+              This is the summary of the job description.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -150,8 +153,10 @@ export default function Component() {
               Download
               <Download className="ml-2 h-4 w-4" />
             </Button>
-            <Button type="submit">
-              <Link href={"/analyze-resume"}>analyze resume📜</Link>
+            <Button type="submit" disabled={loading}>
+              <Link href={loading ? "#" : "/analyze-resume"}>
+                analyze resume📜
+              </Link>
             </Button>
           </CardFooter>
         </Card>

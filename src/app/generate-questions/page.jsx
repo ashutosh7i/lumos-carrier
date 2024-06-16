@@ -164,7 +164,7 @@ export default function Component() {
 
       // Send the request
       const response = await axios.post(
-        "http://20.188.113.104/interviewguide",
+        "https://backend.lumoscareer.co/interviewguide",
         formData,
         {
           headers: {
@@ -423,15 +423,16 @@ export default function Component() {
                         alt="Picture of the author"
                       />
                     </div>
+                    <Button
+                      onClick={() => {
+                        window.location.href = "https://ctt.ac/9E03F";
+                      }}
+                      variant={"outline"}
+                    >
+                      <Twitter /> {"Spread the word✨"}
+                    </Button>
                     <DialogFooter>
-                      <Button
-                        onClick={() => {
-                          window.location.href = "https://ctt.ac/9E03F";
-                        }}
-                        variant={"outline"}
-                      >
-                        <Twitter /> {"Spread the word✨"}
-                      </Button>
+                      <Button onClick={() => router.push("/")}>Close</Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>

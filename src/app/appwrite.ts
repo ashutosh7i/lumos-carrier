@@ -9,15 +9,15 @@ import {
 } from "appwrite";
 
 const client = new Client()
-  .setEndpoint("https://cloud.appwrite.io/v1")
-  .setProject("666c9ac7002d23e56215");
+  .setEndpoint(`${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}`)
+  .setProject(`${process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID}`);
 
 const databases = new Databases(client);
-const databaseID = "jobhunterrrr_db";
-const collectionID = "user_documents";
+const databaseID = `${process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID}`;
+const collectionID = `${process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ID}`;
 
 const storage = new Storage(client);
-const storageID = "666deb0d0016db95c0ec";
+const storageID = `${process.env.NEXT_PUBLIC_APPWRITE_STORAGE_ID}`;
 
 const jobName = "jobName";
 

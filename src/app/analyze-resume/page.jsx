@@ -29,6 +29,7 @@ export default function Component() {
   const [jd, setJd] = useState("");
   const [output, setOutput] = useState("");
   const [analysisResult, setAnalysisResult] = useState(null);
+  const [loading, setLoading] = useState(false); // Added loading state
   const { toast } = useToast();
 
   // Fetch the user's data
@@ -49,10 +50,29 @@ export default function Component() {
       setJd(user.user_jd);
       console.log(jd);
     }
-  }, [user,jd]);
+  }, [user, jd]);
 
   const handleFileChange = (e) => {
-    setResumeFile(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      if (file.type !== "application/pdf") {
+        toast({
+          title: "Invalid File Type ❌",
+          description: "Please upload a PDF file.",
+        });
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File Too Large ❌",
+          description: "File size should be less than 5 MB.",
+        });
+        return;
+      }
+
+      setResumeFile(file);
+    }
   };
 
   const parsePercentage = (percentageString) => {
@@ -68,14 +88,6 @@ export default function Component() {
       description: "Please wait while we process the data",
     });
 
-    // if (!userInput || !resumeFile) {
-    //   toast({
-    //     title: "Error ❌",
-    //     description: "Please provide both job description and resume.",
-    //   });
-    //   return;
-    // }
-
     if (!resumeFile) {
       toast({
         title: "Error ❌",
@@ -84,13 +96,15 @@ export default function Component() {
       return;
     }
 
+    setLoading(true); // Start loading
+
     const formData = new FormData();
     formData.append("job_description", jd);
     formData.append("resume", resumeFile);
 
     try {
       const response = await axios.post(
-        "http://20.188.113.104/analyze",
+        "https://backend.lumoscareer.co/analyze",
         formData,
         {
           headers: {
@@ -112,15 +126,17 @@ export default function Component() {
       });
 
       // Automatically save the analysis result to the database
-      handleSave(data);
+      await handleSave(data);
       // Upload the resume to the bucket
-      handleUpload();
+      await handleUpload();
     } catch (error) {
       toast({
         title: "Error ❌",
         description:
           "An error occurred while analyzing the resume. Please try again later.",
       });
+    } finally {
+      setLoading(false); // End loading
     }
   };
 
@@ -280,8 +296,10 @@ export default function Component() {
               Download
               <Download className="ml-2 h-4 w-4" />
             </Button>
-            <Button type="submit">
-              <Link href={"/generate-resume"}>Generate resume🪄✨</Link>
+            <Button type="submit" disabled={loading}>
+              <Link href={loading ? "#" : "/generate-resume"}>
+                Generate resume🪄✨
+              </Link>
             </Button>
           </CardFooter>
         </Card>

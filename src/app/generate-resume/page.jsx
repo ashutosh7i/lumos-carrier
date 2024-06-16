@@ -755,7 +755,7 @@ export default function Component() {
 
       // Send the request
       const response = await axios.post(
-        "http://20.188.113.104/generateresume",
+        "https://backend.lumoscareer.co/generateresume",
         formData,
         {
           headers: {
