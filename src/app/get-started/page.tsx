@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import Link from "next/link";
 import axios from "axios";
+import { createDocument, updateDocument } from "../appwrite";
 
 export default function Component() {
   const [activeTab, setActiveTab] = useState("input");
@@ -25,23 +26,43 @@ export default function Component() {
   const [output, setOutput] = useState("");
   const { toast } = useToast();
 
-  const predict = async (e:any) => {
+  const predict = async (e: any) => {
     e.preventDefault();
     toast({
       title: "Calling API 📡",
       description: "Please wait while we process the data",
     });
     try {
-      const response = await axios.post("https://httpbin.org/post", {
-        userInput,
-      });
-      const data = JSON.parse(response.data.data); // Parse the string back to JSON
+      const response = await axios.post(
+        "http://20.188.113.104/summarize",
+        {
+          job_description: userInput,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      toast({
-        title: "Response Ready ✅✨",
-        description: "Data has been fetched successfully.",
+      console.log(response.data.summary);
+      // const data = JSON.parse(response.data); // Parse the string back to JSON
+      // console.log(data);
+      // Save the output jd to the database
+      // await createDocument("jobName", response.data.summary);
+      await updateDocument(
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        response.data.summary
+      ).then(() => {
+        toast({
+          title: "Data Saved ✅",
+          description: "Your data has been saved successfully.",
+        });
       });
-      setOutput(data.userInput); // Now you can access userInput
+      setOutput(response.data.summary); // Now you can access userInput
       setActiveTab("output");
     } catch (error) {
       toast({
@@ -51,22 +72,22 @@ export default function Component() {
       });
     }
   };
-const handlePrint = () => {
-  const printWindow = window.open("", "_blank");
-  if (printWindow) {
-    printWindow.document.write(
-      "<html><head><title>Job Description</title></head><body>"
-    );
-    printWindow.document.write(output);
-    printWindow.document.write("</body></html>");
-    printWindow.document.close();
-    printWindow.print();
-  } else {
-    console.error("Failed to open print window.");
-  }
-};
+  const handlePrint = () => {
+    const printWindow = window.open("", "_blank");
+    if (printWindow) {
+      printWindow.document.write(
+        "<html><head><title>Job Description</title></head><body>"
+      );
+      printWindow.document.write(output);
+      printWindow.document.write("</body></html>");
+      printWindow.document.close();
+      printWindow.print();
+    } else {
+      console.error("Failed to open print window.");
+    }
+  };
 
-return (
+  return (
     <Tabs
       value={activeTab}
       onValueChange={setActiveTab}
@@ -86,10 +107,10 @@ return (
                 </CardDescription>
               </div>
               <div className="flex items-center">
-                <div className="grid w-full max-w-sm items-center gap-1.5">
+                {/* <div className="grid w-full max-w-sm items-center gap-1.5">
                   <Label htmlFor="picture">Upload PDF</Label>
                   <Input id="picture" type="file" />
-                </div>
+                </div> */}
               </div>
             </div>
           </CardHeader>
@@ -103,7 +124,7 @@ return (
               />
             </form>
           </CardContent>
-          <CardFooter className="sticky bottom-0 bg-white dark:bg-gray-950 py-4">
+          <CardFooter className="sticky bottom-0 bg-white dark:bg-gray-950 py-4 flex justify-center">
             <Button type="submit" onClick={predict}>
               Summarize📃
             </Button>

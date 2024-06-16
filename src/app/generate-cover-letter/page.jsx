@@ -33,12 +33,14 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
 import axios from "axios";
 import { getDocument, updateDocument, getResume } from "../appwrite";
 import { useRouter } from "next/navigation";
 import Editor from "@/components/Editor";
-import Image from "next/image";
+import "./loader.css";
+import { Image } from "next/image";
 
 export default function Component() {
   const router = useRouter();
@@ -60,32 +62,10 @@ export default function Component() {
   const [userAdditionalInfo, setUserAdditionalInfo] = useState("");
 
   const [resumeUrl, setResumeUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const content = `
-  <div style="font-family: Arial, sans-serif;">
-    <h1 style="color: blue;">John Doe</h1>
-    <h2 style="color: darkblue;">Software Engineer</h2>
-    <p>123 Main St, Anytown, USA</p>
-    <p>(123) 456-7890 | johndoe@example.com</p>
-
-    <h2 style="color: darkblue;">Objective</h2>
-    <p>Highly motivated Software Engineer looking to leverage my knowledge in a challenging role.</p>
-
-    <h2 style="color: darkblue;">Skills</h2>
-    <ul>
-      <li>JavaScript, Python, Java</li>
-      <li>React, Angular, Vue</li>
-      <li>Node.js, Express.js</li>
-      <li>MongoDB, PostgreSQL, MySQL</li>
-    </ul>
-
-    <h2 style="color: darkblue;">Experience</h2>
-    <h3>Software Engineer | Company XYZ | 2019 - Present</h3>
-    <p>Developed and maintained web applications using React and Node.js.</p>
-
-    <h2 style="color: darkblue;">Education</h2>
-    <h3>Bachelor of Science in Computer Science | University ABC | 2015 - 2019</h3>
-</div>
+ <center><h1>Getting ready</h1></center>
 `;
 
   // Fetch the user's data
@@ -149,9 +129,9 @@ export default function Component() {
     }
   };
 
-  const generateResume = async (e) => {
+  const generateCoverLetter = async (e) => {
     e.preventDefault();
-
+    setIsLoading(true);
     //setting all data to be sent in state as json
     const userData = {
       user_jd: user.user_jd,
@@ -168,17 +148,38 @@ export default function Component() {
       title: "Calling API 📡",
       description: "Please wait while we process the data",
     });
-    try {
-      const response = await axios.post("https://httpbin.org/post", {
-        userInput: userData,
-      });
-      const data = JSON.parse(response.data.data); // Parse the string back to JSON
 
+    try {
+      // Download the file
+      const responseFile = await axios.get(resumeUrl, { responseType: "blob" });
+      const file = new File([responseFile.data], "resume.pdf", {
+        type: "application/pdf",
+      });
+
+      // Create form data
+      const formData = new FormData();
+      formData.append("job_description", user.user_jd);
+      formData.append("resume", file);
+
+      // Send the request
+      const response = await axios.post(
+        "http://20.188.113.104/coverletter",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      const data = response.data; // The response is already a JSON
+      setIsLoading(false);
+      console.log(data);
       toast({
         title: "Response Ready ✅✨",
         description: "Data has been fetched successfully.",
       });
-      setOutput(JSON.stringify(data.userInput)); // Now you can access userInput
+      setOutput(JSON.stringify(data.cover_letter.replace(/\n/g, ""))); // Now you can access cover_letter
       setActiveTab("output");
     } catch (error) {
       toast({
@@ -186,15 +187,15 @@ export default function Component() {
         description:
           "An error occurred while fetching data. Please try again later.",
       });
+      setIsLoading(false);
     }
   };
-
   const handlePrint = () => {
     const printWindow = window.open("", "_blank");
     printWindow.document.write(
       "<html><head><title>Job Description</title></head><body>"
     );
-    printWindow.document.write(content);
+    printWindow.document.write(output);
     printWindow.document.write("</body></html>");
     printWindow.document.close();
     printWindow.print();
@@ -202,12 +203,76 @@ export default function Component() {
 
   return (
     <>
+      {isLoading && (
+        <Dialog open defaultOpen>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Processing</DialogTitle>
+              <DialogDescription>
+                Your cover letter is being generated. Please wait.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="loader-container">
+              {/* <div className="loader"></div> */}
+              <div>
+                <svg class="pl" width="240" height="240" viewBox="0 0 240 240">
+                  <circle
+                    className="pl__ring pl__ring--a"
+                    cx="120"
+                    cy="120"
+                    r="105"
+                    fill="none"
+                    stroke="#000"
+                    stroke-width="20"
+                    stroke-dasharray="0 660"
+                    stroke-dashoffset="-330"
+                    stroke-linecap="round"
+                  ></circle>
+                  <circle
+                    className="pl__ring pl__ring--b"
+                    cx="120"
+                    cy="120"
+                    r="35"
+                    fill="none"
+                    stroke="#000"
+                    stroke-width="20"
+                    stroke-dasharray="0 220"
+                    stroke-dashoffset="-110"
+                    stroke-linecap="round"
+                  ></circle>
+                  <circle
+                    className="pl__ring pl__ring--c"
+                    cx="85"
+                    cy="120"
+                    r="70"
+                    fill="none"
+                    stroke="#000"
+                    stroke-width="20"
+                    stroke-dasharray="0 440"
+                    stroke-linecap="round"
+                  ></circle>
+                  <circle
+                    className="pl__ring pl__ring--d"
+                    cx="155"
+                    cy="120"
+                    r="70"
+                    fill="none"
+                    stroke="#000"
+                    stroke-width="20"
+                    stroke-dasharray="0 440"
+                    stroke-linecap="round"
+                  ></circle>
+                </svg>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
       <div className="w-full max-w-3xl mx-auto">
         <div className="pb-10">
-          <CardTitle>Generate resume✨</CardTitle>
+          <CardTitle>Generate Cover Letter📧</CardTitle>
           <CardDescription>
-            Generate a resume by analyzing your resume and filling out the
-            details.
+            Generate a cover letter based on your resume and job description.
           </CardDescription>
         </div>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="">
@@ -543,8 +608,8 @@ export default function Component() {
                 </div>
               </CardContent>
               <CardFooter className="sticky bottom-0 bg-white dark:bg-gray-950 py-4 flex justify-center">
-                <Button type="submit" onClick={generateResume}>
-                  Generate resume🪄✨
+                <Button type="submit" onClick={generateCoverLetter}>
+                  Generate Cover Letter🪄✨
                 </Button>
               </CardFooter>
             </Card>
@@ -555,13 +620,31 @@ export default function Component() {
           <TabsContent value="output">
             <Card>
               <CardHeader>
-                <CardTitle>Resume Analyzer📜</CardTitle>
-                <CardDescription>
-                  This is the summary of your resume.
-                </CardDescription>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardTitle>Cover Letter📜</CardTitle>
+                    <CardDescription>
+                      Your cover letter has been generated successfully.
+                    </CardDescription>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="grid w-full max-w-sm items-center gap-1.5">
+                      <Label htmlFor="picture">do you like it?</Label>
+                      <Button onClick={generateCoverLetter}>
+                        Generate again 🔂
+                      </Button>
+                    </div>
+                  </div>
+                </div>
               </CardHeader>
+
               <CardContent>
-                <Editor content={content} />
+                <Editor
+                  content={output
+                    .replace(/\n/g, "")
+                    .replace(/"```html|```"/g, "")
+                    .replace(/"/g, " ")}
+                />
                 {/* <div className="prose">{output}</div> */}
               </CardContent>
               <CardFooter className="sticky bottom-0 bg-white dark:bg-gray-950 py-4 ">
@@ -574,9 +657,7 @@ export default function Component() {
                   <Download className="ml-2 h-4 w-4" />
                 </Button>
                 <Button type="submit">
-                  <Link href={"/generate-cover-letter"}>
-                    Generate Cover Letter🪄✨
-                  </Link>
+                  <Link href={"/"}>Done✨😄</Link>
                 </Button>
               </CardFooter>
             </Card>

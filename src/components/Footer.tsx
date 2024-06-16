@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Footer() {
   return (
-    <footer className="bg-white dark:bg-gray-900">
+    <footer className="bg-white dark:bg-gray-900  inset-x-0 bottom-0">
       <div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
         <div className="md:flex md:justify-between">
           <div className="mb-6 md:mb-0">
@@ -13,7 +13,7 @@ export default function Footer() {
                 alt="FlowBite Logo"
               /> */}
               <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-                Job Hunterrrr🧑‍💼
+                lumos carrier🪄🧑‍💼
               </span>
             </a>
           </div>
@@ -83,11 +83,12 @@ export default function Footer() {
         <hr className="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
         <div className="sm:flex sm:items-center sm:justify-between">
           <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">
-            © 2023{" "}
+            © 2024{" "}
             <a href="https://flowbite.com/" className="hover:underline">
-              Job Hunterrrr🧑‍💼™
+              lumos carrier🪄🧑‍💼™
             </a>
-            . All Rights Reserved.
+            . made with ❤️ by{" "}
+            <a href="https://github.com/ashutosh7i">@ashutosh7i</a>
           </span>
           <div className="flex mt-4 sm:justify-center sm:mt-0">
             <a

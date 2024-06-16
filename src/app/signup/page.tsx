@@ -2,14 +2,36 @@
 
 import { FormEvent, useState } from "react";
 import { register } from "../appwrite";
-import Image from "next/image";
+import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
 
-export default function SignUp() {
+import Link from "next/link";
+
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+export default function LoginForm() {
+  const [name, setName] = useState<string>();
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
+  const router = useRouter();
+  const { toast } = useToast();
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!name) {
+      alert("Name is required.");
+      return;
+    }
+
     if (!email) {
       alert("Email is required.");
       return;
@@ -25,28 +47,75 @@ export default function SignUp() {
       return;
     }
 
-    register(email, password).then((account) =>
-      alert(`Successfully created account with ID: ${account.$id}`)
-    );
+    register(email, password, name)
+      .then((account) =>
+        toast({
+          title: "Registered 🔐✅",
+          description: `Welcome, ${account.name}`,
+        })
+      )
+      .finally(() => router.push("/login"));
   };
-
   return (
     <form className="form" onSubmit={handleSubmit}>
-      <label htmlFor="email">Email</label>
-      <input
-        id="email"
-        type="email"
-        onChange={(e) => setEmail(e.target.value)}
-      />
-
-      <label htmlFor="password">Password</label>
-      <input
-        id="password"
-        type="password"
-        onChange={(e) => setPassword(e.target.value)}
-      />
-
-      <button type="submit">Sign up</button>
+      <Card className="mx-auto max-w-sm">
+        <CardHeader>
+          <CardTitle className="text-xl">Sign Up</CardTitle>
+          <CardDescription>
+            Enter your information to create an account
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4">
+            {/* <div className="grid grid-cols-2 gap-4"> */}
+            <div className="grid gap-2">
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="Max"
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+            {/* <div className="grid gap-2">
+                <Label htmlFor="last-name">Last name</Label>
+                <Input id="last-name" placeholder="Robinson" required />
+              </div> */}
+            {/* </div> */}
+            <div className="grid gap-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="m@example.com"
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <Button type="submit" className="w-full">
+              Create an account
+            </Button>
+            {/* <Button variant="outline" className="w-full">
+              Sign up with GitHub
+            </Button> */}
+          </div>
+          <div className="mt-4 text-center text-sm">
+            Already have an account?{" "}
+            <Link href="#" className="underline">
+              Sign in
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
     </form>
   );
 }

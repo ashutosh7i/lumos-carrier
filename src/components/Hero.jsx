@@ -36,8 +36,9 @@ export default function Hero() {
   }, []);
 
   function handleGetStarted() {
+    console.log(user);
     if (user) {
-      router.push("/get-started");
+      router.push("/dashboard");
     } else {
       router.push("/login");
     }
@@ -77,7 +78,7 @@ export default function Hero() {
           {/* Title */}
           <div className="mt-5 max-w-2xl text-center mx-auto">
             <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-              Job Hunterrrr&apos;🧑‍💼
+              lumos carrier🪄🧑‍💼
             </h1>
           </div>
           {/* End Title */}
@@ -96,11 +97,15 @@ export default function Hero() {
             <Button
               size={"lg"}
               onClick={handleGetStarted}
-              className="bg-blue-400"
+              className="bg-blue-400 text-white dark:bg-blue-600 dark:text-gray-200"
             >
               Get started🚀
             </Button>
-            <Button size={"lg"} variant={"outline"}>
+            <Button
+              size={"lg"}
+              variant={"outline"}
+              className="border-blue-400 text-blue-400 dark:border-blue-600 dark:text-blue-600"
+            >
               Learn more🤔
             </Button>
           </div>

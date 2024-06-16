@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Card,
@@ -19,36 +19,141 @@ import { useToast } from "@/components/ui/use-toast";
 import Link from "next/link";
 import axios from "axios";
 import GaugeChart from "react-gauge-chart";
+import { getDocument, updateDocument, uploadResume } from "../appwrite";
 
 export default function Component() {
+  const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState("input");
   const [userInput, setUserInput] = useState("");
+  const [resumeFile, setResumeFile] = useState(null);
+  const [jd, setJd] = useState("");
   const [output, setOutput] = useState("");
+  const [analysisResult, setAnalysisResult] = useState(null);
   const { toast } = useToast();
 
-  const predict = async (e) => {
+  // Fetch the user's data
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const user = await getDocument();
+        setUser(user);
+      } catch (error) {
+        alert("Failed to fetch user data: " + error.message);
+      }
+    };
+    fetchData();
+  }, []);
+  // setting jd from user data
+  useEffect(() => {
+    if (user) {
+      setJd(user.user_jd);
+      console.log(jd);
+    }
+  }, [user,jd]);
+
+  const handleFileChange = (e) => {
+    setResumeFile(e.target.files[0]);
+  };
+
+  const parsePercentage = (percentageString) => {
+    if (!percentageString) return 0;
+    const numericPart = percentageString.replace("%", "");
+    return parseFloat(numericPart) / 100;
+  };
+
+  const analyzeResume = async (e) => {
     e.preventDefault();
     toast({
-      title: "Calling API 📡",
+      title: "Analyzing Resume 📡",
       description: "Please wait while we process the data",
     });
-    try {
-      const response = await axios.post("https://httpbin.org/post", {
-        userInput,
-      });
-      const data = JSON.parse(response.data.data);
 
+    // if (!userInput || !resumeFile) {
+    //   toast({
+    //     title: "Error ❌",
+    //     description: "Please provide both job description and resume.",
+    //   });
+    //   return;
+    // }
+
+    if (!resumeFile) {
       toast({
-        title: "Response Ready ✅✨",
-        description: "Data has been fetched successfully.",
+        title: "Error ❌",
+        description: "Please provide your resume.",
       });
-      setOutput(data.userInput);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("job_description", jd);
+    formData.append("resume", resumeFile);
+
+    try {
+      const response = await axios.post(
+        "http://20.188.113.104/analyze",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      const data = response.data;
+
+      // Update state with analysis result
+      setAnalysisResult(data);
       setActiveTab("output");
+
+      // Display success toast
+      toast({
+        title: "Analysis Complete ✅✨",
+        description: "Your resume has been analyzed successfully.",
+      });
+
+      // Automatically save the analysis result to the database
+      handleSave(data);
+      // Upload the resume to the bucket
+      handleUpload();
     } catch (error) {
       toast({
         title: "Error ❌",
         description:
-          "An error occurred while fetching data. Please try again later.",
+          "An error occurred while analyzing the resume. Please try again later.",
+      });
+    }
+  };
+
+  //  Save the analysis result to the database
+  const handleSave = async (analysisData) => {
+    let analysisDataString = JSON.stringify(analysisData);
+    console.log(typeof analysisDataString);
+    try {
+      await updateDocument(undefined, analysisDataString, undefined, undefined);
+      toast({
+        title: "Save Successful ✅",
+        description: "Resume analysis has been saved successfully!",
+      });
+    } catch (error) {
+      toast({
+        title: "Save Failed ❌",
+        description: "Failed to save resume analysis: " + error.message,
+      });
+    }
+  };
+
+  // upload user's resume to bucket
+  const handleUpload = async () => {
+    try {
+      await uploadResume(resumeFile);
+      toast({
+        title: "Upload Successful ✅",
+        description: "Your resume has been uploaded successfully!",
+      });
+    } catch (error) {
+      toast({
+        title: "Upload Failed ❌",
+        description: "Failed to upload resume: " + error.message,
       });
     }
   };
@@ -84,29 +189,26 @@ export default function Component() {
                   Analyze your resume and get a summary of it.
                 </CardDescription>
               </div>
-              <div className="flex items-center">
-                <div className="grid w-full max-w-sm items-center gap-1.5">
-                  <Label htmlFor="picture">Upload PDF</Label>
-                  <Input id="picture" type="file" />
-                </div>
-              </div>
             </div>
           </CardHeader>
           <CardContent>
-            <form onSubmit={predict} className="space-y-4">
-              <Textarea
-                placeholder="Paste raw resume here..."
-                value={userInput}
-                onChange={(e) => setUserInput(e.target.value)}
-                className="w-full"
-              />
-            </form>
+            <div className="flex items-center justify-center">
+              <div className="grid w-full max-w-sm items-center gap-1.5">
+                <Label htmlFor="resume">Upload PDF</Label>
+                <Input
+                  required
+                  id="resume"
+                  type="file"
+                  onChange={handleFileChange}
+                />
+              </div>
+            </div>
+            <CardFooter className="sticky bottom-0 bg-white dark:bg-gray-950 py-4 flex justify-center">
+              <Button type="submit" onClick={analyzeResume}>
+                Analyze📃
+              </Button>
+            </CardFooter>
           </CardContent>
-          <CardFooter className="sticky bottom-0 bg-white dark:bg-gray-950 py-4">
-            <Button type="submit" onClick={predict}>
-              Analyze📃
-            </Button>
-          </CardFooter>
         </Card>
         <TabsList className="grid gap-2">
           <TabsTrigger value="output">Output</TabsTrigger>
@@ -121,46 +223,53 @@ export default function Component() {
                 <CardDescription>
                   This is the summary of your resume.
                 </CardDescription>
-                <p>
-                  Profile Summary: Lorem ipsum, dolor sit amet consectetur
-                  adipisicing elit. Ratione sapiente molestiae, est soluta
-                  deserunt quidem consequatur doloribus ut voluptatum omnis!
-                  Quae totam vero voluptatem amet et provident iure quaerat ad,
-                  dolorem, omnis incidunt aut quis modi doloribus quidem?
-                  Perferendis soluta adipisci consequatur possimus maxime. Et
-                  maiores ducimus animi culpa dignissimos.
-                </p>
+                {analysisResult && (
+                  <>
+                    <p>Profile Summary: {analysisResult["Profile Summary"]}</p>
+                    <p>
+                      Things to be Removed:{" "}
+                      {analysisResult["ThingsToBeRemoved"].join(", ")}
+                    </p>
+                    <p>
+                      Things to be Added:{" "}
+                      {analysisResult["ThingsToBeAdded"].join(", ")}
+                    </p>
+                  </>
+                )}
               </div>
               <div className="flex flex-col items-center w-1/2 space-y-4">
                 <div className="flex flex-col items-center w-full">
-                  <GaugeChart
-                    textColor="black"
-                    colors={["#FF5F6D", "#FFC371", "#ffe300", "#00ff00"]}
-                    id="gauge-chart4"
-                    nrOfLevels={10}
-                    arcPadding={0.1}
-                    cornerRadius={3}
-                    percent={0.6}
-                  />
+                  {analysisResult && (
+                    <GaugeChart
+                      textColor="black"
+                      colors={["#FF5F6D", "#FFC371", "#ffe300", "#00ff00"]}
+                      id="gauge-chart4"
+                      nrOfLevels={10}
+                      arcPadding={0.1}
+                      cornerRadius={3}
+                      percent={parsePercentage(analysisResult["JD Match"])}
+                    />
+                  )}
                   <p>JD match score</p>
                 </div>
                 <div className="flex flex-col items-center w-full">
-                  <p>ATS Friendliness: Good</p>
-                  <p>Missing Keywords: </p>
+                  {analysisResult && (
+                    <>
+                      <p>
+                        ATS Friendliness: {analysisResult["ATS Friendliness"]}
+                      </p>
+                      <p>
+                        Missing Keywords:{" "}
+                        {analysisResult["MissingKeywords"].join(", ")}
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
           </CardHeader>
-
-          {/* <CardContent className="pt-10">
-            <div className="prose">{output}</div>
-          </CardContent> */}
           <CardContent className="pt-2">
-            <p>
-              Things to add: Lorem ipsum, dolor sit amet consectetur adipisicing
-              elit.
-            </p>
-            <p>Things to remove: </p>
+            {/* Render more details from analysisResult if needed */}
           </CardContent>
           <CardFooter className="sticky bottom-0 bg-white dark:bg-gray-950 py-4 ">
             <Button

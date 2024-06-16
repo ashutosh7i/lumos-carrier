@@ -28,10 +28,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.variable}`}>
-        <ThemeProvider>
+        <ThemeProvider defaultTheme="light">
           <Navbar />
+          <br />
           {children}
           <Toaster />
+          <br />
           <Footer />
         </ThemeProvider>
       </body>
