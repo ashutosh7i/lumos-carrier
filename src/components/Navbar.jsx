@@ -101,10 +101,9 @@ export default function Component() {
 
 // ... rest of the code
 
-function MenuIcon() {
+function MenuIcon(props) {
   return (
     <svg
-      {...props}
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
@@ -122,10 +121,9 @@ function MenuIcon() {
   );
 }
 
-function MountainIcon() {
+function MountainIcon(props) {
   return (
     <svg
-      {...props}
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
